@@ -57,9 +57,9 @@ Projeto em fase inicial de planejamento e desenvolvimento.
 
 ## Colaboradores
 
-Gustavo Muller
-Luiz Felipe
-Tiago Santos
+- Gustavo Muller
+- Luiz Felipe
+- Tiago Santos
 
 Este projeto está sendo desenvolvido para fins acadêmicos.
 
