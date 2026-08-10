@@ -60,6 +60,7 @@ Projeto em fase inicial de planejamento e desenvolvimento.
 - Gustavo Muller
 - Luiz Felipe
 - Tiago Santos
+- Vitor Souza
 
 Este projeto está sendo desenvolvido para fins acadêmicos.
 
