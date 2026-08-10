@@ -63,5 +63,3 @@ Projeto em fase inicial de planejamento e desenvolvimento.
 - Vitor Souza
 
 Este projeto está sendo desenvolvido para fins acadêmicos.
-
-Este projeto está sendo desenvolvido para fins acadêmicos e de estudo.
