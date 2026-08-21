@@ -104,4 +104,34 @@ Para cada entidade, identificamos os principais atributos que precisam ser armaz
       - lida (verdadeiro/falso)
       - dataEnvio
 
+## 4. Principais Relacionamentos
 
+*   **Usuário x Ticket:** Um usuário (solicitante) pode abrir `N` tickets (1:N). Um usuário (responsável) pode ser atribuído a `N` tickets (1:N).
+*   **Ticket x Comentário / Anexo / Histórico:** Um ticket possui `N` comentários, `N` anexos e `N` registros de histórico (1:N).
+*   **Setor x Usuário / Ticket:** Um setor agrupa `N` usuários e recebe `N` tickets (1:N).
+*   **Usuário x Papel:** Um usuário possui 1 papel, e um papel pode ser atribuído a `N` usuários (1:N).
+*   **Usuário x Notificação:** Um usuário recebe `N` notificações (1:N).
+
+---
+
+## 5. Discussão: Embedded Documents x Collections Separadas
+
+Não mapeamos automaticamente todas as 10 entidades para 10 coleções (collections). A decisão entre **Embutir (Embed)** ou **Referenciar (Reference)** vai se basear na frequência de acesso, tamanho dos dados e necessidade de atualização.
+
+### Possíveis Documentos Incorporados (Embedded Documents)
+*   **Papel em Usuário:** Como o papel define permissões e é lido a cada requisição de login/autenticação, ele deve ser embutido dentro da collection `Users` (ou tratado como um array de strings).
+*   **Status, Categoria, Setor, e resumo do Usuário em Ticket:** Para carregar o Kanban rapidamente sem fazer joins custosos (`$lookup`), os dados estáticos dessas entidades (como o nome da categoria, nome do solicitante, cor e nome do status) devem ser embutidos no documento do `Ticket`.
+*   **Comentários e Anexos em Ticket:** Como pertencem estritamente a um único ticket e geralmente não atingem o limite de 16MB do documento, eles devem ser embutidos como arrays de objetos (`[ { ... } ]`) dentro de `Tickets`.
+
+### Collections Separadas (Referências)
+*   **Setores, Categorias, Usuários:** Precisam existir como coleções independentes para gerenciar cadastros e permitir a listagem nas telas de administração. O Ticket apenas copia (embute) os dados de leitura vitais no momento de sua criação ou atualização.
+*   **Histórico de Movimentação:** Sofre de crescimento ilimitado. Embutir isso no Ticket o deixaria muito pesado. Deve ser uma collection separada.
+*   **Notificações:** O padrão de acesso é baseado no usuário (ex: "buscar notificações não lidas para o usuário X"), não no Ticket. Deve ser uma collection independente.
+
+---
+
+## 6. Justificativa das Decisões de Modelagem
+
+1.  **Prioridade na Leitura (Read-Heavy):** A decisão de embutir informações de leitura no documento principal do `Ticket` atende diretamente à pergunta central: *"Como os dados serão utilizados?"*. Por exemplo, a equipe que for utilizar a plataforma precisa visualizar o painel sem lentidão; ler um documento que já contém o nome do solicitante, o setor responsável e os metadados dos anexos evita múltiplas consultas ao banco de dados.
+2.  **Evitar Crescimento Descontrolado (Anti-Pattern: Unbounded Arrays):** A separação do `Histórico de Movimentação` foi decidida porque cada mudança de status, atribuição ou edição gera um novo log. Se isso fosse um array dentro do `Ticket`, a performance de reescrita do documento iria degradar ao longo do tempo.
+3.  **Isolamento de Domínio de Acesso:** As `Notificações` foram isoladas porque sua renderização ocorre no cabeçalho da aplicação (o "sininho"), antes mesmo do usuário carregar os dados completos de um chamado, justificando a consulta exclusiva por `usuario_id`.
