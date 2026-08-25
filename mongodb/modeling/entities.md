@@ -1,4 +1,4 @@
-# Levantamento das entidades
+# 1. Levantamento das entidades
 Começamos com o levantamento das principais entidades do domínio que serão utilizadas na construção do banco de dados MongoDB. Na hora de criar o banco, algumas dessas entidades poderão ser incorporadas (embutidas) dentro de outras, mas elas existem conceitualmente
 ## Entidades: 
   - Usuário
@@ -12,7 +12,7 @@ Começamos com o levantamento das principais entidades do domínio que serão ut
   - Anexo
   - Notificação
 
-# Descrição e responsabilidade de cada entidade
+# 2. Descrição e responsabilidade de cada entidade
 | Entidade| Descrição| Responsabilidade no sistema|
 |--------|-----------|----------|
 | Usuário| Pessoa que acessa a plataforma (colaborador ou atendente).| Autenticar no sistema, abrir, responder ou gerenciar tickets.|
@@ -26,7 +26,7 @@ Começamos com o levantamento das principais entidades do domínio que serão ut
 |Anexo| Arquivo enviado para complementar a solicitação.| Fornecer contexto adicional (imagens de erros, documentos).|
 |Notificação| Alerta gerado por mudanças no sistema.| Avisar os usuários quando um ticket for atualizado, movido ou respondido.|
 
-# Levantamento dos atributos
+# 3. Levantamento dos atributos
 Para cada entidade, identificamos os principais atributos que precisam ser armazenados.
   - Usuário
       - _id
