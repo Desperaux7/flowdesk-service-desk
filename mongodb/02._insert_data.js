@@ -487,3 +487,11 @@ print("Comentários: " + db.comentarios.countDocuments());
 print("Históricos: " + db.historicos.countDocuments());
 print("Anexos: " + db.anexos.countDocuments());
 print("Notificações: " + db.notificacoes.countDocuments());
+
+db.notificacoes.insertOne({
+    _id: ObjectId(),
+    usuario_id: usuarioPedroId,
+    mensagem: "Bem-vindo ao FlowDesk.",
+    lida: false,
+    dataEnvio: ISODate("2026-10-05T10:00:00Z")
+});
