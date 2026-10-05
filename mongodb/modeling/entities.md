@@ -255,15 +255,15 @@ Os dados serão armazenados em collections independentes e relacionados por meio
 
 A decisão foi tomada considerando as características do FlowDesk:
 
-Usuários são reutilizados em diversos tickets.
-Setores possuem diversos usuários e recebem diversos tickets.
-Categorias podem ser utilizadas em diversos tickets.
-Status são utilizados por diversos tickets.
-Papéis podem ser atribuídos a diversos usuários.
-Comentários possuem autores e pertencem a tickets.
-Históricos podem possuir grande quantidade de registros.
-Anexos possuem vida associada ao ticket, mas podem ser armazenados independentemente.
-Notificações são consultadas principalmente por usuário.
+- Usuários são reutilizados em diversos tickets.
+- Setores possuem diversos usuários e recebem diversos tickets.
+- Categorias podem ser utilizadas em diversos tickets.
+- Status são utilizados por diversos tickets.
+- Papéis podem ser atribuídos a diversos usuários.
+- Comentários possuem autores e pertencem a tickets.
+- Históricos podem possuir grande quantidade de registros.
+- Anexos possuem vida associada ao ticket, mas podem ser armazenados independentemente.
+- Notificações são consultadas principalmente por usuário.
 
 A utilização de referências evita a duplicação dos dados e permite que as informações sejam atualizadas de forma independente.
 
