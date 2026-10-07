@@ -182,19 +182,14 @@ usada somente quando houver uma justificativa real.
    { _id: 0, titulo: 1, setor_destino_id: 1 }
  );
 
-// 14.5 - 1 consulta envolvendo Embedded Document
- db.usuarios.find(
-   { embedded_exemplos: { $elemMatch: { setor_id: setorTIId, papel_id: papelSolicitanteId } } },
-   { _id: 0, nome: 1, embedded_exemplos: 1 }
- );
 
-// 14.6 - 1 consulta utilizando array
+// 14.5 - 1 consulta utilizando array
  db.papeis.find(
    { permissoes: "ticket.comentar" },
    { _id: 0, nome: 1, permissoes: 1 }
  );
 
-// 14.7 - 1 consulta utilizando ordenação
+// 14.6 - 1 consulta utilizando ordenação
  db.tickets.find(
    {},
    { _id: 0, titulo: 1, prioridade: 1, dataCriacao: 1 }
