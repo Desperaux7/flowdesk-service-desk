@@ -1,12 +1,12 @@
 package com.flowdesk.aplication.models;
 
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Document(collection = "ticket")
 public class Ticket {
@@ -17,8 +17,15 @@ public class Ticket {
     private String prioridade;
     private LocalDateTime dataCriacao;
     private LocalDateTime dataConclusao;
-    private List<Comentario> comentarios = new ArrayList<>();
-    private List<Historico> historicos = new ArrayList<>();
+
+    @DocumentReference
+    private Categoria categoria;
+
+    @DocumentReference
+    private Usuario solicitante;
+
+    @DocumentReference
+    private Usuario tecnicoResponsavel;
 
     public Ticket(String id, String titulo, String descricao, String prioridade, LocalDateTime dataConclusao, LocalDateTime dataCriacao){
         this.id = id;
@@ -27,6 +34,18 @@ public class Ticket {
         this.prioridade = prioridade;
         this.dataCriacao = dataCriacao;
         this.dataConclusao = dataConclusao;
+    }
+
+    public Ticket(String id, String titulo, String descricao, String prioridade, LocalDateTime dataConclusao, LocalDateTime dataCriacao, Categoria categoria, Usuario solicitante, Usuario tecnicoResponsavel) {
+        this.id = id;
+        this.titulo = titulo;
+        this.descricao = descricao;
+        this.prioridade = prioridade;
+        this.dataCriacao = dataCriacao;
+        this.dataConclusao = dataConclusao;
+        this.categoria = categoria;
+        this.solicitante = solicitante;
+        this.tecnicoResponsavel = tecnicoResponsavel;
     }
 
     public Ticket() {
@@ -80,19 +99,27 @@ public class Ticket {
         this.dataConclusao = dataConclusao;
     }
 
-    public List<Comentario> getComentarios() {
-        return comentarios;
+    public Categoria getCategoria() {
+        return categoria;
     }
 
-    public void setComentarios(List<Comentario> comentarios) {
-        this.comentarios = comentarios;
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
     }
 
-    public List<Historico> getHistoricos() {
-        return historicos;
+    public Usuario getSolicitante() {
+        return solicitante;
     }
 
-    public void setHistoricos(List<Historico> historicos) {
-        this.historicos = historicos;
+    public void setSolicitante(Usuario solicitante) {
+        this.solicitante = solicitante;
+    }
+
+    public Usuario getTecnicoResponsavel() {
+        return tecnicoResponsavel;
+    }
+
+    public void setTecnicoResponsavel(Usuario tecnicoResponsavel) {
+        this.tecnicoResponsavel = tecnicoResponsavel;
     }
 }
