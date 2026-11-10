@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Document(collection = "usuario")
 public class Usuario {
@@ -15,9 +16,9 @@ public class Usuario {
     private Integer senha_hash;
 
 
-    private LocalDate dataCriacao;
+    private LocalDateTime dataCriacao;
 
-    public Usuario(String id, String nome, String email, Integer senha_hash, LocalDate dataCriacao) {
+    public Usuario(String id, String nome, String email, Integer senha_hash, LocalDateTime dataCriacao) {
         this.id = id;
         this.nome = nome;
         this.email = email;
@@ -60,11 +61,11 @@ public class Usuario {
         this.senha_hash = senha_hash;
     }
 
-    public LocalDate getDataCriacao() {
+    public LocalDateTime getDataCriacao() {
         return dataCriacao;
     }
 
-    public void setDataCriacao(LocalDate dataCriacao) {
+    public void setDataCriacao(LocalDateTime dataCriacao) {
         this.dataCriacao = dataCriacao;
     }
 }

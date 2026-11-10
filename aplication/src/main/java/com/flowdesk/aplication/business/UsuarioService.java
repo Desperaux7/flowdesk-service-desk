@@ -33,4 +33,8 @@ public class UsuarioService {
     public void deletarUsuario(String id){
         usuarioRepository.deleteById(id);
     }
+    public Usuario buscaUsuarioID(String id){
+        return usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario não encontrado"));
+    }
 }
