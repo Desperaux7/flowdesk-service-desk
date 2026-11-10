@@ -2,7 +2,9 @@ package com.flowdesk.aplication.business;
 
 import com.flowdesk.aplication.models.Usuario;
 import com.flowdesk.aplication.repositories.UsuarioRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +29,7 @@ public class UsuarioService {
        if (usuarioExiste.isPresent()){
           return usuarioRepository.save(usuario);
        }
-       return new Usuario();
+       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario não encontrado");
 
     }
     public void deletarUsuario(String id){

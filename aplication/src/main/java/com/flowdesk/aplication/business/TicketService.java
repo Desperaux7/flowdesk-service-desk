@@ -3,7 +3,9 @@ package com.flowdesk.aplication.business;
 
 import com.flowdesk.aplication.models.Ticket;
 import com.flowdesk.aplication.repositories.TicketRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +29,7 @@ public class TicketService {
         if (ticketExiste.isPresent()){
             return ticketRepository.save(ticket);
         }
-        return new Ticket();
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket não encontrado");
     }
     //Deleta um ticket
     public void deletarTicket(String id){
