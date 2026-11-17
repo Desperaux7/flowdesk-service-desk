@@ -3,8 +3,9 @@ package com.flowdesk.aplication.models;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.FieldType;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Document(collection = "ticket")
@@ -16,6 +17,16 @@ public class Ticket {
     private String prioridade;
     private LocalDateTime dataCriacao;
     private LocalDateTime dataConclusao;
+    @Field(targetType = FieldType.OBJECT_ID)
+    private String solicitanteID;
+    @Field(targetType = FieldType.OBJECT_ID)
+    private String responsavelID;
+    @Field(targetType = FieldType.OBJECT_ID)
+    private String categoriaID;
+    @Field(targetType = FieldType.OBJECT_ID)
+    private String setorDestinoID;
+    @Field(targetType = FieldType.OBJECT_ID)
+    private String statusID;
 
     public Ticket(String id, String titulo, String descricao, String prioridade, LocalDateTime dataConclusao, LocalDateTime dataCriacao){
         this.id = id;
@@ -75,5 +86,45 @@ public class Ticket {
 
     public void setDataConclusao(LocalDateTime dataConclusao) {
         this.dataConclusao = dataConclusao;
+    }
+
+    public String getSolicitanteID() {
+        return solicitanteID;
+    }
+
+    public void setSolicitanteID(String solicitanteID) {
+        this.solicitanteID = solicitanteID;
+    }
+
+    public String getResponsavelID() {
+        return responsavelID;
+    }
+
+    public void setResponsavelID(String responsavelID) {
+        this.responsavelID = responsavelID;
+    }
+
+    public String getCategoriaID() {
+        return categoriaID;
+    }
+
+    public void setCategoriaID(String categoriaID) {
+        this.categoriaID = categoriaID;
+    }
+
+    public String getSetorDestinoID() {
+        return setorDestinoID;
+    }
+
+    public void setSetorDestinoID(String setorDestinoID) {
+        this.setorDestinoID = setorDestinoID;
+    }
+
+    public String getStatusID() {
+        return statusID;
+    }
+
+    public void setStatusID(String statusID) {
+        this.statusID = statusID;
     }
 }
