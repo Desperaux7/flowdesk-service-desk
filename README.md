@@ -57,9 +57,10 @@ Projeto em fase inicial de planejamento e desenvolvimento.
 
 ## Colaboradores
 
-- Gustavo Muller
-- Luiz Felipe
-- Tiago Santos
+- Áleffy de Almeida Figueiredo Santos
+- Gustavo Muller de Oliveira Pires
+- Luiz Felipe do Rosário Cintra
+- Tiago de Jesus Santos
 - Vitor Souza
 
 Este projeto está sendo desenvolvido para fins acadêmicos.
