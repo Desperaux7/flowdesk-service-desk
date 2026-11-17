@@ -2,7 +2,8 @@ package com.flowdesk.aplication.models;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
+import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.FieldType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -14,6 +15,10 @@ public class Usuario {
     private String nome;
     private String email;
     private Integer senha_hash;
+    @Field(targetType = FieldType.OBJECT_ID)
+    private String setorId;
+    @Field(targetType = FieldType.OBJECT_ID)
+    private String papelId;
 
 
     private LocalDateTime dataCriacao;
