@@ -1,6 +1,7 @@
 package com.flowdesk.aplication.controllers;
 
 import com.flowdesk.aplication.business.StatusService;
+import com.flowdesk.aplication.dto.TicketResponse;
 import com.flowdesk.aplication.models.Status;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class StatusController {
 
     @PostMapping
     public ResponseEntity<Status> salvaStatus(@RequestBody Status status) {
-        return ResponseEntity.ok().body(statusService.salvaStatus(status));
+        return ResponseEntity.status(201).body(statusService.salvaStatus(status));
     }
 
     @GetMapping
@@ -32,6 +33,11 @@ public class StatusController {
         return ResponseEntity.ok().body(statusService.buscaStatusID(id));
     }
 
+    @GetMapping("/{id}/tickets")
+    public ResponseEntity<List<TicketResponse>> buscaTickets(@PathVariable String id) {
+        return ResponseEntity.ok(statusService.buscaTickets(id));
+    }
+
     @PutMapping
     public ResponseEntity<Status> atualizaStatus(@RequestBody Status status) {
         return ResponseEntity.ok().body(statusService.atualizaStatus(status));
@@ -40,6 +46,6 @@ public class StatusController {
     @DeleteMapping
     public ResponseEntity<Void> deletarStatus(@RequestParam("id") String id) {
         statusService.deletarStatus(id);
-        return ResponseEntity.accepted().build();
+        return ResponseEntity.noContent().build();
     }
 }

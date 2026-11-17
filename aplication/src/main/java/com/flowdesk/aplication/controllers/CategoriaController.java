@@ -1,6 +1,8 @@
 package com.flowdesk.aplication.controllers;
 
 import com.flowdesk.aplication.business.CategoriaService;
+import com.flowdesk.aplication.dto.CategoriaResponse;
+import com.flowdesk.aplication.dto.TicketResponse;
 import com.flowdesk.aplication.models.Categoria;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,28 +20,33 @@ public class CategoriaController {
     }
 
     @PostMapping
-    public ResponseEntity<Categoria> salvaCategoria(@RequestBody Categoria categoria) {
-        return ResponseEntity.ok().body(categoriaService.salvaCategoria(categoria));
+    public ResponseEntity<CategoriaResponse> salvaCategoria(@RequestBody Categoria categoria) {
+        return ResponseEntity.status(201).body(categoriaService.salvaCategoria(categoria));
     }
 
     @GetMapping
-    public ResponseEntity<List<Categoria>> buscaCategorias() {
+    public ResponseEntity<List<CategoriaResponse>> buscaCategorias() {
         return ResponseEntity.ok().body(categoriaService.buscaCategorias());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Categoria> buscaCategoriaID(@PathVariable String id) {
+    public ResponseEntity<CategoriaResponse> buscaCategoriaID(@PathVariable String id) {
         return ResponseEntity.ok().body(categoriaService.buscaCategoriaID(id));
     }
 
+    @GetMapping("/{id}/tickets")
+    public ResponseEntity<List<TicketResponse>> buscaTickets(@PathVariable String id) {
+        return ResponseEntity.ok(categoriaService.buscaTickets(id));
+    }
+
     @PutMapping
-    public ResponseEntity<Categoria> atualizaCategoria(@RequestBody Categoria categoria) {
+    public ResponseEntity<CategoriaResponse> atualizaCategoria(@RequestBody Categoria categoria) {
         return ResponseEntity.ok().body(categoriaService.atualizaCategoria(categoria));
     }
 
     @DeleteMapping
     public ResponseEntity<Void> deletarCategoria(@RequestParam("id") String id) {
         categoriaService.deletarCategoria(id);
-        return ResponseEntity.accepted().build();
+        return ResponseEntity.noContent().build();
     }
 }

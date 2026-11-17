@@ -1,6 +1,5 @@
 package com.flowdesk.aplication.dto;
 
-import com.flowdesk.aplication.models.Categoria;
 import com.flowdesk.aplication.models.Setor;
 import com.flowdesk.aplication.models.Status;
 
@@ -20,7 +19,7 @@ public record TicketResponse(
         String statusID,
         UsuarioResumo solicitante,
         UsuarioResumo responsavel,
-        Categoria categoria,
+        CategoriaResponse categoria,
         Setor setorDestino,
         Status status
 ) {

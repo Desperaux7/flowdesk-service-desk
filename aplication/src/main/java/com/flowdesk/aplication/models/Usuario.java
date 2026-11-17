@@ -4,7 +4,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.FieldType;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Document(collection = "usuario")
@@ -14,7 +13,7 @@ public class Usuario {
     private String id;
     private String nome;
     private String email;
-    private Integer senha_hash;
+    private String senha_hash;
     @Field(targetType = FieldType.OBJECT_ID)
     private String setorId;
     @Field(targetType = FieldType.OBJECT_ID)
@@ -23,7 +22,7 @@ public class Usuario {
 
     private LocalDateTime dataCriacao;
 
-    public Usuario(String id, String nome, String email, Integer senha_hash, LocalDateTime dataCriacao) {
+    public Usuario(String id, String nome, String email, String senha_hash, LocalDateTime dataCriacao) {
         this.id = id;
         this.nome = nome;
         this.email = email;
@@ -58,11 +57,11 @@ public class Usuario {
         this.email = email;
     }
 
-    public Integer getSenha_hash() {
+    public String getSenha_hash() {
         return senha_hash;
     }
 
-    public void setSenha_hash(Integer senha_hash) {
+    public void setSenha_hash(String senha_hash) {
         this.senha_hash = senha_hash;
     }
 
@@ -72,5 +71,21 @@ public class Usuario {
 
     public void setDataCriacao(LocalDateTime dataCriacao) {
         this.dataCriacao = dataCriacao;
+    }
+
+    public String getSetorId() {
+        return setorId;
+    }
+
+    public void setSetorId(String setorId) {
+        this.setorId = setorId;
+    }
+
+    public String getPapelId() {
+        return papelId;
+    }
+
+    public void setPapelId(String papelId) {
+        this.papelId = papelId;
     }
 }

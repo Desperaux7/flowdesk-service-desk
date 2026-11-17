@@ -16,7 +16,7 @@ public class TicketController {
     //Create
     @PostMapping
     public ResponseEntity<TicketResponse> salvaTicket(@RequestBody Ticket ticket){
-        return ResponseEntity.ok().body(ticketService.salvaTicket(ticket));
+        return ResponseEntity.status(201).body(ticketService.salvaTicket(ticket));
     }
     //Busca todos
     @GetMapping
@@ -63,7 +63,7 @@ public class TicketController {
     @DeleteMapping
     public ResponseEntity<Void> deletarTicket(@RequestParam("id") String id){
         ticketService.deletarTicket(id);
-        return ResponseEntity.accepted().build();
+        return ResponseEntity.noContent().build();
     }
 
 }

@@ -1,6 +1,7 @@
 package com.flowdesk.aplication.controllers;
 
 import com.flowdesk.aplication.business.HistoricoService;
+import com.flowdesk.aplication.dto.HistoricoResponse;
 import com.flowdesk.aplication.models.Historico;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,28 +19,38 @@ public class HistoricoController {
     }
 
     @PostMapping
-    public ResponseEntity<Historico> salvaHistorico(@RequestBody Historico historico) {
-        return ResponseEntity.ok().body(historicoService.salvaHistorico(historico));
+    public ResponseEntity<HistoricoResponse> salvaHistorico(@RequestBody Historico historico) {
+        return ResponseEntity.status(201).body(historicoService.salvaHistorico(historico));
     }
 
     @GetMapping
-    public ResponseEntity<List<Historico>> buscaHistoricos() {
+    public ResponseEntity<List<HistoricoResponse>> buscaHistoricos() {
         return ResponseEntity.ok().body(historicoService.buscaHistoricos());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Historico> buscaHistoricoID(@PathVariable String id) {
+    public ResponseEntity<HistoricoResponse> buscaHistoricoID(@PathVariable String id) {
         return ResponseEntity.ok().body(historicoService.buscaHistoricoID(id));
     }
 
     @PutMapping
-    public ResponseEntity<Historico> atualizaHistorico(@RequestBody Historico historico) {
+    public ResponseEntity<HistoricoResponse> atualizaHistorico(@RequestBody Historico historico) {
         return ResponseEntity.ok().body(historicoService.atualizaHistorico(historico));
+    }
+
+    @GetMapping("/ticket/{ticketID}")
+    public ResponseEntity<List<HistoricoResponse>> buscaPorTicket(@PathVariable String ticketID) {
+        return ResponseEntity.ok(historicoService.buscaPorTicket(ticketID));
+    }
+
+    @GetMapping("/autor/{autorAcaoID}")
+    public ResponseEntity<List<HistoricoResponse>> buscaPorAutorAcao(@PathVariable String autorAcaoID) {
+        return ResponseEntity.ok(historicoService.buscaPorAutorAcao(autorAcaoID));
     }
 
     @DeleteMapping
     public ResponseEntity<Void> deletarHistorico(@RequestParam("id") String id) {
         historicoService.deletarHistorico(id);
-        return ResponseEntity.accepted().build();
+        return ResponseEntity.noContent().build();
     }
 }

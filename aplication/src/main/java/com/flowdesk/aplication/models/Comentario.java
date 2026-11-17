@@ -2,6 +2,8 @@ package com.flowdesk.aplication.models;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.FieldType;
 
 import java.time.LocalDateTime;
 
@@ -12,6 +14,10 @@ public class Comentario {
     private String id;
     private String mensagem;
     private LocalDateTime dataPublicacao;
+    @Field(targetType = FieldType.OBJECT_ID)
+    private String ticketID;
+    @Field(targetType = FieldType.OBJECT_ID)
+    private String autorID;
 
     public Comentario(String id, String mensagem, LocalDateTime dataPublicacao) {
         this.id = id;
@@ -44,5 +50,21 @@ public class Comentario {
 
     public void setDataPublicacao(LocalDateTime dataPublicacao) {
         this.dataPublicacao = dataPublicacao;
+    }
+
+    public String getTicketID() {
+        return ticketID;
+    }
+
+    public void setTicketID(String ticketID) {
+        this.ticketID = ticketID;
+    }
+
+    public String getAutorID() {
+        return autorID;
+    }
+
+    public void setAutorID(String autorID) {
+        this.autorID = autorID;
     }
 }
