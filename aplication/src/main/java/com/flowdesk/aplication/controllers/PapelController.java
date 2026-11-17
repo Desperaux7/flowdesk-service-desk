@@ -1,6 +1,7 @@
 package com.flowdesk.aplication.controllers;
 
 import com.flowdesk.aplication.business.PapelService;
+import com.flowdesk.aplication.dto.UsuarioResumo;
 import com.flowdesk.aplication.models.Papel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class PapelController {
 
     @PostMapping
     public ResponseEntity<Papel> salvaPapel(@RequestBody Papel papel) {
-        return ResponseEntity.ok().body(papelService.salvaPapel(papel));
+        return ResponseEntity.status(201).body(papelService.salvaPapel(papel));
     }
 
     @GetMapping
@@ -32,6 +33,11 @@ public class PapelController {
         return ResponseEntity.ok().body(papelService.buscaPapelID(id));
     }
 
+    @GetMapping("/{id}/usuarios")
+    public ResponseEntity<List<UsuarioResumo>> buscaUsuarios(@PathVariable String id) {
+        return ResponseEntity.ok(papelService.buscaUsuarios(id));
+    }
+
     @PutMapping
     public ResponseEntity<Papel> atualizaPapel(@RequestBody Papel papel) {
         return ResponseEntity.ok().body(papelService.atualizaPapel(papel));
@@ -40,6 +46,6 @@ public class PapelController {
     @DeleteMapping
     public ResponseEntity<Void> deletarPapel(@RequestParam("id") String id) {
         papelService.deletarPapel(id);
-        return ResponseEntity.accepted().build();
+        return ResponseEntity.noContent().build();
     }
 }

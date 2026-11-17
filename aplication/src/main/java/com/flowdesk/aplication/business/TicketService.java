@@ -1,20 +1,15 @@
 package com.flowdesk.aplication.business;
+import com.flowdesk.aplication.common.ReferenceIds;
+import com.flowdesk.aplication.common.RelationshipMapper;
 import com.flowdesk.aplication.dto.TicketResponse;
-import com.flowdesk.aplication.dto.UsuarioResumo;
 import com.flowdesk.aplication.models.Ticket;
-import com.flowdesk.aplication.repositories.TicketRepository;
-import org.bson.types.ObjectId;
+import com.flowdesk.aplication.repositories.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import com.flowdesk.aplication.repositories.UsuarioRepository;
-import com.flowdesk.aplication.repositories.SetorRepository;
-import com.flowdesk.aplication.repositories.CategoriaRepository;
-import com.flowdesk.aplication.repositories.StatusRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
 
 @Service
 public class TicketService {
@@ -23,57 +18,86 @@ public class TicketService {
     private final SetorRepository setorRepository;
     private final CategoriaRepository categoriaRepository;
     private final StatusRepository statusRepository;
+    private final ComentarioRepository comentarioRepository;
+    private final HistoricoRepository historicoRepository;
+    private final AnexoRepository anexoRepository;
+    private final RelationshipMapper relationshipMapper;
 
-    public TicketService(TicketRepository ticketRepository, UsuarioRepository usuarioRepository, SetorRepository setorRepository, CategoriaRepository categoriaRepository, StatusRepository statusRepository) {
+    public TicketService(TicketRepository ticketRepository, UsuarioRepository usuarioRepository,
+                         SetorRepository setorRepository, CategoriaRepository categoriaRepository,
+                         StatusRepository statusRepository, ComentarioRepository comentarioRepository,
+                         HistoricoRepository historicoRepository, AnexoRepository anexoRepository,
+                         RelationshipMapper relationshipMapper) {
         this.ticketRepository = ticketRepository;
         this.usuarioRepository = usuarioRepository;
         this.setorRepository = setorRepository;
         this.categoriaRepository = categoriaRepository;
         this.statusRepository = statusRepository;
+        this.comentarioRepository = comentarioRepository;
+        this.historicoRepository = historicoRepository;
+        this.anexoRepository = anexoRepository;
+        this.relationshipMapper = relationshipMapper;
     }
 
     //create novo ticket :>
     public TicketResponse salvaTicket(Ticket ticket) {
+        if (ticket.getId() != null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não informe ID ao criar ticket");
+        }
         validarReferencias(ticket);
-        return detalhar(ticketRepository.save(ticket));
+        if (ticket.getTitulo() == null || ticket.getTitulo().isBlank()
+                || ticket.getDescricao() == null || ticket.getDescricao().isBlank()
+                || ticket.getPrioridade() == null || ticket.getPrioridade().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Título, descrição e prioridade são obrigatórios");
+        }
+        ticket.setDataCriacao(LocalDateTime.now());
+        ticket.setDataConclusao(null);
+        return relationshipMapper.ticket(ticketRepository.save(ticket));
     }
 
     //Procura todos os tickets
     public List<TicketResponse> buscaTickets() {
-        return ticketRepository.findAll().stream().map(this::detalhar).toList();
+        return ticketRepository.findAll().stream().map(relationshipMapper::ticket).toList();
     }
-
+    // procura todos os tickets de um solicitante específico
     public List<TicketResponse> buscaPorSolicitante(String solicitanteID) {
+        validarFiltro(solicitanteID, "Solicitante", usuarioRepository::existsById);
         return ticketRepository.findBySolicitanteID(solicitanteID).stream()
-                .map(this::detalhar).toList();
+                .map(relationshipMapper::ticket).toList();
     }
-
+    // procura todos os tickets de um responsável específico
     public List<TicketResponse> buscaPorResponsavel(String responsavelID) {
+        validarFiltro(responsavelID, "Responsável", usuarioRepository::existsById);
         return ticketRepository.findByResponsavelID(responsavelID).stream()
-                .map(this::detalhar).toList();
+                .map(relationshipMapper::ticket).toList();
     }
-
+    // procura todos os tickets de uma categoria específica
     public List<TicketResponse> buscaPorCategoria(String categoriaID) {
+        validarFiltro(categoriaID, "Categoria", categoriaRepository::existsById);
         return ticketRepository.findByCategoriaID(categoriaID).stream()
-                .map(this::detalhar).toList();
+                .map(relationshipMapper::ticket).toList();
     }
-
+    // procura todos os tickets de um setor de destino específico
     public List<TicketResponse> buscaPorSetorDestino(String setorDestinoID) {
+        validarFiltro(setorDestinoID, "Setor", setorRepository::existsById);
         return ticketRepository.findBySetorDestinoID(setorDestinoID).stream()
-                .map(this::detalhar).toList();
+                .map(relationshipMapper::ticket).toList();
     }
-
+    // procura todos os tickets de um status específico
     public List<TicketResponse> buscaPorStatus(String statusID) {
+        validarFiltro(statusID, "Status", statusRepository::existsById);
         return ticketRepository.findByStatusID(statusID).stream()
-                .map(this::detalhar).toList();
+                .map(relationshipMapper::ticket).toList();
     }
 
     //Procura um ticket pelo id :>
     public TicketResponse buscaTicketID(String id) {
+        ReferenceIds.require(id, "ID do ticket");
         Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Ticket não encontrado"));
-        return detalhar(ticket);
+        return relationshipMapper.ticket(ticket);
     }
 
     //Update em um ticket :>, caso não tenha esse ticket ele cria um novo
@@ -82,96 +106,63 @@ public class TicketService {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "ID do ticket é obrigatório para atualização");
         }
-        Optional<Ticket> ticketExiste = ticketRepository.findById(ticket.getId());
-        if (ticketExiste.isPresent()) {
-            validarReferencias(ticket);
-            return detalhar(ticketRepository.save(ticket));
+        ReferenceIds.require(ticket.getId(), "ID do ticket");
+        Ticket existente = ticketRepository.findById(ticket.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket não encontrado"));
+        validarReferencias(ticket);
+        if (ticket.getTitulo() == null || ticket.getTitulo().isBlank()
+                || ticket.getDescricao() == null || ticket.getDescricao().isBlank()
+                || ticket.getPrioridade() == null || ticket.getPrioridade().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Título, descrição e prioridade são obrigatórios");
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket não encontrado");
+        if (ticket.getDataCriacao() == null) {
+            ticket.setDataCriacao(existente.getDataCriacao());
+        }
+        return relationshipMapper.ticket(ticketRepository.save(ticket));
     }
 
     //Deleta um ticket
     public void deletarTicket(String id) {
+        ReferenceIds.require(id, "ID do ticket");
+        if (!ticketRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket não encontrado");
+        }
+        if (comentarioRepository.existsByTicketID(id)
+                || historicoRepository.existsByTicketID(id)
+                || anexoRepository.existsByTicketID(id)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Não é possível excluir ticket com comentários, histórico ou anexos");
+        }
         ticketRepository.deleteById(id);
     }
 
     private void validarReferencias(Ticket ticket) {
-        validarReferencia(ticket.getSolicitanteID(), "Solicitante", true,
-                usuarioRepository::existsById);
-        validarReferencia(ticket.getResponsavelID(), "Responsável", false,
-                usuarioRepository::existsById);
-        validarReferencia(ticket.getSetorDestinoID(), "Setor", false,
-                setorRepository::existsById);
-        validarReferencia(ticket.getCategoriaID(), "Categoria", false,
-                categoriaRepository::existsById);
-        validarReferencia(ticket.getStatusID(), "Status", false,
-                statusRepository::existsById);
+        validarFiltro(ReferenceIds.require(ticket.getSolicitanteID(), "Solicitante"),
+                "Solicitante", usuarioRepository::existsById);
+        validarOpcional(ticket.getResponsavelID(), "Responsável", usuarioRepository::existsById);
+        validarFiltro(ReferenceIds.require(ticket.getSetorDestinoID(), "Setor"),
+                "Setor", setorRepository::existsById);
+        validarFiltro(ReferenceIds.require(ticket.getCategoriaID(), "Categoria"),
+                "Categoria", categoriaRepository::existsById);
+        validarFiltro(ReferenceIds.require(ticket.getStatusID(), "Status"),
+                "Status", statusRepository::existsById);
     }
 
-    private void validarReferencia(String id, String entidade, boolean obrigatoria,
-                                   Predicate<String> existePorId) {
-        if (id == null) {
-            if (obrigatoria) {
-                throw new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, entidade + " é obrigatório");
-            }
-            return;
+    private void validarOpcional(String id, String entidade,
+                                 java.util.function.Predicate<String> exists) {
+        String validId = ReferenceIds.optional(id, entidade);
+        if (validId != null) {
+            validarFiltro(validId, entidade, exists);
         }
+    }
 
-        if (!ObjectId.isValid(id)) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "ID de " + entidade + " inválido");
-        }
-
-        if (!existePorId.test(id)) {
+    private void validarFiltro(String id, String entidade,
+                              java.util.function.Predicate<String> exists) {
+        ReferenceIds.require(id, entidade);
+        if (!exists.test(id)) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, entidade + " não encontrado");
         }
-    }
-
-    private TicketResponse detalhar(Ticket ticket) {
-        var solicitante = ticket.getSolicitanteID() == null ? null
-                : usuarioRepository.findById(ticket.getSolicitanteID())
-                .map(usuario -> new UsuarioResumo(
-                        usuario.getId(), usuario.getNome(), usuario.getEmail()))
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Solicitante referenciado pelo ticket não encontrado"));
-        var responsavel = ticket.getResponsavelID() == null ? null
-                : usuarioRepository.findById(ticket.getResponsavelID())
-                .map(usuario -> new UsuarioResumo(
-                        usuario.getId(), usuario.getNome(), usuario.getEmail()))
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Responsável referenciado pelo ticket não encontrado"));
-        var categoria = ticket.getCategoriaID() == null ? null
-                : categoriaRepository.findById(ticket.getCategoriaID())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Categoria referenciada pelo ticket não encontrada"));
-        var setorDestino = ticket.getSetorDestinoID() == null ? null
-                : setorRepository.findById(ticket.getSetorDestinoID())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Setor referenciado pelo ticket não encontrado"));
-        var status = ticket.getStatusID() == null ? null
-                : statusRepository.findById(ticket.getStatusID())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Status referenciado pelo ticket não encontrado"));
-
-        return new TicketResponse(
-                ticket.getId(),
-                ticket.getTitulo(),
-                ticket.getDescricao(),
-                ticket.getPrioridade(),
-                ticket.getDataCriacao(),
-                ticket.getDataConclusao(),
-                ticket.getSolicitanteID(),
-                ticket.getResponsavelID(),
-                ticket.getCategoriaID(),
-                ticket.getSetorDestinoID(),
-                ticket.getStatusID(),
-                solicitante,
-                responsavel,
-                categoria,
-                setorDestino,
-                status
-        );
     }
 }

@@ -2,6 +2,8 @@ package com.flowdesk.aplication.models;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.FieldType;
 
 @Document(collection = "anexo")
 public class Anexo {
@@ -12,6 +14,8 @@ public class Anexo {
     private String url_caminho;
     private String extensao;
     private Integer tamanho;
+    @Field(targetType = FieldType.OBJECT_ID)
+    private String ticketID;
 
     public Anexo(String id, String nome_arquivo, String url_caminho, String extensao, Integer tamanho) {
         this.id = id;
@@ -62,5 +66,13 @@ public class Anexo {
 
     public void setTamanho(Integer tamanho) {
         this.tamanho = tamanho;
+    }
+
+    public String getTicketID() {
+        return ticketID;
+    }
+
+    public void setTicketID(String ticketID) {
+        this.ticketID = ticketID;
     }
 }

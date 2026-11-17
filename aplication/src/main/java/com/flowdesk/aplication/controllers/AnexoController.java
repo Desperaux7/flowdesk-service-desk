@@ -1,6 +1,7 @@
 package com.flowdesk.aplication.controllers;
 
 import com.flowdesk.aplication.business.AnexoService;
+import com.flowdesk.aplication.dto.AnexoResponse;
 import com.flowdesk.aplication.models.Anexo;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,28 +19,33 @@ public class AnexoController {
     }
 
     @PostMapping
-    public ResponseEntity<Anexo> salvaAnexo(@RequestBody Anexo anexo) {
-        return ResponseEntity.ok().body(anexoService.salvaAnexo(anexo));
+    public ResponseEntity<AnexoResponse> salvaAnexo(@RequestBody Anexo anexo) {
+        return ResponseEntity.status(201).body(anexoService.salvaAnexo(anexo));
     }
 
     @GetMapping
-    public ResponseEntity<List<Anexo>> buscaAnexos() {
+    public ResponseEntity<List<AnexoResponse>> buscaAnexos() {
         return ResponseEntity.ok().body(anexoService.buscaAnexos());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Anexo> buscaAnexoID(@PathVariable String id) {
+    public ResponseEntity<AnexoResponse> buscaAnexoID(@PathVariable String id) {
         return ResponseEntity.ok().body(anexoService.buscaAnexoID(id));
     }
 
     @PutMapping
-    public ResponseEntity<Anexo> atualizaAnexo(@RequestBody Anexo anexo) {
+    public ResponseEntity<AnexoResponse> atualizaAnexo(@RequestBody Anexo anexo) {
         return ResponseEntity.ok().body(anexoService.atualizaAnexo(anexo));
+    }
+
+    @GetMapping("/ticket/{ticketID}")
+    public ResponseEntity<List<AnexoResponse>> buscaPorTicket(@PathVariable String ticketID) {
+        return ResponseEntity.ok(anexoService.buscaPorTicket(ticketID));
     }
 
     @DeleteMapping
     public ResponseEntity<Void> deletarAnexo(@RequestParam("id") String id) {
         anexoService.deletarAnexo(id);
-        return ResponseEntity.accepted().build();
+        return ResponseEntity.noContent().build();
     }
 }

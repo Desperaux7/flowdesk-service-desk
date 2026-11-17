@@ -2,6 +2,8 @@ package com.flowdesk.aplication.models;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.FieldType;
 
 import java.time.LocalDateTime;
 
@@ -13,6 +15,8 @@ public class Notificacao {
     private String mensagem;
     private Boolean lida;
     private LocalDateTime dataEnvio;
+    @Field(targetType = FieldType.OBJECT_ID)
+    private String usuarioID;
 
     public Notificacao(String id, String mensagem, Boolean lida, LocalDateTime dataEnvio) {
         this.id = id;
@@ -54,5 +58,13 @@ public class Notificacao {
 
     public void setDataEnvio(LocalDateTime dataEnvio) {
         this.dataEnvio = dataEnvio;
+    }
+
+    public String getUsuarioID() {
+        return usuarioID;
+    }
+
+    public void setUsuarioID(String usuarioID) {
+        this.usuarioID = usuarioID;
     }
 }

@@ -1,6 +1,7 @@
 package com.flowdesk.aplication.controllers;
 
 import com.flowdesk.aplication.business.ComentarioService;
+import com.flowdesk.aplication.dto.ComentarioResponse;
 import com.flowdesk.aplication.models.Comentario;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,28 +19,38 @@ public class ComentarioController {
     }
 
     @PostMapping
-    public ResponseEntity<Comentario> salvaComentario(@RequestBody Comentario comentario) {
-        return ResponseEntity.ok().body(comentarioService.salvaComentario(comentario));
+    public ResponseEntity<ComentarioResponse> salvaComentario(@RequestBody Comentario comentario) {
+        return ResponseEntity.status(201).body(comentarioService.salvaComentario(comentario));
     }
 
     @GetMapping
-    public ResponseEntity<List<Comentario>> buscaComentarios() {
+    public ResponseEntity<List<ComentarioResponse>> buscaComentarios() {
         return ResponseEntity.ok().body(comentarioService.buscaComentarios());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Comentario> buscaComentarioID(@PathVariable String id) {
+    public ResponseEntity<ComentarioResponse> buscaComentarioID(@PathVariable String id) {
         return ResponseEntity.ok().body(comentarioService.buscaComentarioID(id));
     }
 
     @PutMapping
-    public ResponseEntity<Comentario> atualizaComentario(@RequestBody Comentario comentario) {
+    public ResponseEntity<ComentarioResponse> atualizaComentario(@RequestBody Comentario comentario) {
         return ResponseEntity.ok().body(comentarioService.atualizaComentario(comentario));
+    }
+
+    @GetMapping("/ticket/{ticketID}")
+    public ResponseEntity<List<ComentarioResponse>> buscaPorTicket(@PathVariable String ticketID) {
+        return ResponseEntity.ok(comentarioService.buscaPorTicket(ticketID));
+    }
+
+    @GetMapping("/autor/{autorID}")
+    public ResponseEntity<List<ComentarioResponse>> buscaPorAutor(@PathVariable String autorID) {
+        return ResponseEntity.ok(comentarioService.buscaPorAutor(autorID));
     }
 
     @DeleteMapping
     public ResponseEntity<Void> deletarComentario(@RequestParam("id") String id) {
         comentarioService.deletarComentario(id);
-        return ResponseEntity.accepted().build();
+        return ResponseEntity.noContent().build();
     }
 }

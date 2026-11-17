@@ -2,6 +2,8 @@ package com.flowdesk.aplication.models;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.FieldType;
 
 import java.time.LocalDateTime;
 
@@ -14,6 +16,10 @@ public class Historico {
     private String valor_anterior;
     private String valor_novo;
     private LocalDateTime dataHora;
+    @Field(targetType = FieldType.OBJECT_ID)
+    private String ticketID;
+    @Field(targetType = FieldType.OBJECT_ID)
+    private String autorAcaoID;
 
     public Historico(String id, String acao, String valor_anterior, String valor_novo, LocalDateTime dataHora) {
         this.id = id;
@@ -64,5 +70,21 @@ public class Historico {
 
     public void setDataHora(LocalDateTime dataHora) {
         this.dataHora = dataHora;
+    }
+
+    public String getTicketID() {
+        return ticketID;
+    }
+
+    public void setTicketID(String ticketID) {
+        this.ticketID = ticketID;
+    }
+
+    public String getAutorAcaoID() {
+        return autorAcaoID;
+    }
+
+    public void setAutorAcaoID(String autorAcaoID) {
+        this.autorAcaoID = autorAcaoID;
     }
 }
